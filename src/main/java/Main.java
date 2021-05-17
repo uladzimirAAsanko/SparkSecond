@@ -1,3 +1,5 @@
+import by.sanko.spark.entity.HotelData;
+import by.sanko.spark.parser.HotelParser;
 import org.apache.spark.api.java.function.FilterFunction;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Encoders;
@@ -13,8 +15,12 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static org.apache.spark.sql.functions.round;
 
 public class Main {
+    private static String offset = "offsetConf";
     private static SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+    private static HashMap<Long, HotelData> hotelData = new HashMap<>();
+
     public static void main(String[] args) {
+        invokeHotelData();
         SparkSession spark = SparkSession.builder().appName("Simple Application").getOrCreate();
         spark.sparkContext().setLogLevel("ERROR");
         Dataset<Row> usersDF = spark.read().format("avro").load("/user/hadoop/task1/expedia/*.avro");
@@ -29,9 +35,10 @@ public class Main {
         HashMap<Long,ArrayList<String>> listHashMap = new HashMap<>();
         AtomicInteger i = new AtomicInteger();
         System.out.println("Uniq hotels are " + longs.size());
+        Dataset<Row> finalUsersDF = usersDF;
         longs.forEach(s-> {
             ArrayList<String> list = new ArrayList<>();
-            List<String> values = usersDF.selectExpr("CAST(srch_ci AS STRING)").
+            List<String> values = finalUsersDF.selectExpr("CAST(srch_ci AS STRING)").
                     where("hotel_id=" + s).
                     orderBy("srch_ci").
                     as(Encoders.STRING()).
@@ -71,22 +78,63 @@ public class Main {
             }
             listHashMap.put(s, list);
         });
-        ArrayList<String> wasted = new ArrayList<>();
+        ArrayList<Long> wasted = new ArrayList<>();
         for(Long hotelID : longs){
             ArrayList<String> list = listHashMap.get(hotelID);
-            if(list != null && list.size() > 2 && list.size() < 30){
+            if(list != null && list.size() > 0 && list.size() < 30){
+                wasted.add(hotelID);
                 StringBuilder tmp = new StringBuilder(hotelID + " ");
+                HotelData hotelInfo = hotelData.get(hotelID);
+                tmp.append(hotelInfo.getName()).append(" ").append(hotelInfo.getCountry()).append(" ")
+                        .append(hotelInfo.getCity()).append(" ").append(hotelInfo.getAddress());
                 for(String value : list){
                     tmp.append(value).append(" ");
                 }
-                wasted.add(tmp.toString());
+                System.out.println(tmp.toString());
             }
         }
-        for(String waste : wasted){
-            System.out.println(waste);
+        for(Long val : wasted){
+            usersDF = usersDF.where("hotel_id!=" + val);
         }
+        usersDF.write().format("csv")
+                .partitionBy("srch_ci")
+                .option("sep", ";")
+                .option("inferSchema", "true")
+                .option("header", "true")
+                .save("/user/hadoop/task1/expedia/new_ver/");
         System.out.println("Hotels are " + hotelsID.size());
         System.out.println("Searched val " + hotelsID.get(1));
         System.out.println("Select all ");
+    }
+
+    private static void invokeHotelData(){
+        SparkSession spark = SparkSession.builder().appName("Simple Application").getOrCreate();
+        ResourceBundle resourceBundle = ResourceBundle.getBundle(offset);
+        resourceBundle.getString("endingOffsets");
+        Dataset<Row> df = spark
+                .read()
+                .format("kafka")
+                .option("kafka.bootstrap.servers", "host.docker.internal:9094")
+                .option("subscribe", "hw-data-topic") //weathers-data-hash
+                .option("endingOffsets", resourceBundle.getString("endingOffsets"))
+                .option("startingOffsets", resourceBundle.getString("startingOffsets"))
+                .option("maxOffsetsPerTrigger", resourceBundle.getString("maxOffsetsPerTrigger"))
+                .load();
+        spark.sparkContext().setLogLevel("ERROR");
+        List<String> stringList = df.selectExpr("CAST(value AS STRING)").as(Encoders.STRING()).collectAsList();
+        List<String> hotels = new ArrayList<>();
+        for(String value : stringList){
+            int index = value.indexOf('\n');
+            String tmp = value.substring(index + 1, value.indexOf('\n', index +1));
+            hotels.add(tmp);
+            System.out.println(tmp);
+        }
+        for(String hotel : hotels){
+            HotelData data = HotelParser.parseData(hotel);
+            hotelData.put(data.getId(), data);
+        }
+        System.out.println("Hotel data is " + hotelData.size());
+        long numAs = df.count();
+        System.out.println("Lines at all: " + numAs);
     }
 }
