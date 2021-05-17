@@ -20,7 +20,12 @@ public class Main {
             System.out.println("Part is     " + part);
         }
         ArrayList<Long> hotels_id = new ArrayList();//Long.parseLong(row.toString())) hotels_id.add(row.getLong(0)
-        usersDF.selectExpr("CAST(hotel_id AS LONG)").foreach((ForeachFunction<Row>) row -> hotels_id.add(row.getLong(0)));
+        usersDF.selectExpr("CAST(hotel_id AS LONG)");
+        usersDF.foreach((ForeachFunction<Row>) row -> {
+            Long val = row.getLong(0);
+            System.out.println(val);
+            hotels_id.add(val);
+        });
         System.out.println("Hotels are " + (long) hotels_id.size());
     }
 }
