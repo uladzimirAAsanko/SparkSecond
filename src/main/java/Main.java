@@ -1,6 +1,10 @@
+import org.apache.spark.api.java.function.ForeachFunction;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SparkSession;
+
+import java.util.ArrayList;
+import java.util.HashSet;
 
 import static org.apache.spark.sql.functions.col;
 
@@ -15,7 +19,7 @@ public class Main {
         for(String part : strings){
             System.out.println("Part is     " + part);
         }
-        Dataset<Row> hotelsID =  usersDF.filter(col("hotel_id"));
-        hotelsID.show();
+        HashSet<String> hotels_id = new HashSet();
+        usersDF.foreach((ForeachFunction<Row>) System.out::println);
     }
 }
