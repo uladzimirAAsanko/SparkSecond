@@ -13,5 +13,6 @@ public class Main {
         for(String part : strings){
             System.out.println("Part is     " + part);
         }
+        usersDF.show();
     }
 }
