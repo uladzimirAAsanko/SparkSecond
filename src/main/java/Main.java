@@ -6,6 +6,7 @@ import org.apache.spark.sql.SparkSession;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
 import static org.apache.spark.sql.functions.col;
 
@@ -20,7 +21,7 @@ public class Main {
         for(String part : strings){
             System.out.println("Part is     " + part);
         }
-        ArrayList<Long> hotelsID = (ArrayList<Long>) usersDF.selectExpr("CAST(hotel_id AS LONG)").as(Encoders.LONG()).collectAsList();//Long.parseLong(row.toString())) hotels_id.add(row.getLong(0)
+        List<Long> hotelsID =  usersDF.selectExpr("CAST(hotel_id AS LONG)").as(Encoders.LONG()).collectAsList();//Long.parseLong(row.toString())) hotels_id.add(row.getLong(0)
         System.out.println("Hotels are " + hotelsID.size());
     }
 }
