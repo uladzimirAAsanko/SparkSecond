@@ -60,7 +60,7 @@ public class Main {
                     Date currDate = format.parse(data);
                     long diff = currDate.getTime() - prevDate.getTime();
                     long dayDiff = TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS);
-                    if (dayDiff > 1){
+                    if (dayDiff > 1 && dayDiff < 30){
                         System.out.println("Hotel with missing date  is " + s);
                         Calendar c = Calendar.getInstance();
                         c.setTime(prevDate);
