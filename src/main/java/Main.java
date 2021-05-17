@@ -41,36 +41,50 @@ public class Main {
             i.getAndIncrement();
             String prevVal = values.get(0);
             System.out.println("Process " + s +" by count is " +i + " size of dates is " + values.size());
-            for(String data : values){
-                try {
-                    Date prevDate = format.parse(prevVal);
-                    Date currDate = format.parse(data);
-                    long diff = currDate.getTime() - prevDate.getTime();
-                    long dayDiff = TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS);
-                    if (dayDiff > 1 && dayDiff < 30){
-                        System.out.println("Hotel with missing date  is " + s);
-                        Calendar c = Calendar.getInstance();
-                        c.setTime(prevDate);
-                        c.add(Calendar.DATE,1);
-                        while(c.getTime().before(currDate)){
-                            String tmp = format.format(c.getTime());
-                            System.out.println("Missing date is " + tmp);
-                            list.add(tmp);
-                            c.add(Calendar.DATE,1);
+            if(values.size() != 92) {
+                for (String data : values) {
+                    try {
+                        Date prevDate = format.parse(prevVal);
+                        Date currDate = format.parse(data);
+                        long diff = currDate.getTime() - prevDate.getTime();
+                        long dayDiff = TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS);
+                        if (dayDiff > 1 && dayDiff < 30) {
+                            System.out.println("Hotel with missing date  is " + s);
+                            Calendar c = Calendar.getInstance();
+                            c.setTime(prevDate);
+                            c.add(Calendar.DATE, 1);
+                            while (c.getTime().before(currDate)) {
+                                String tmp = format.format(c.getTime());
+                                System.out.println("Missing date is " + tmp);
+                                list.add(tmp);
+                                c.add(Calendar.DATE, 1);
+                            }
                         }
+                        prevVal = data;
+                    } catch (ParseException e) {
+                        System.out.println("Error in parsing dates");
+                    } catch (NullPointerException e) {
+                        System.out.println("Exception in hotel " + s);
+                        System.out.println("Values are  " + values.size());
                     }
-                    prevVal = data;
-                } catch (ParseException e) {
-                    System.out.println("Error in parsing dates");
-                }
-                catch (NullPointerException e){
-                    System.out.println("Exception in hotel " + s);
-                    System.out.println("Values are  " + values.size());
                 }
             }
             listHashMap.put(s, list);
         });
-
+        ArrayList<String> wasted = new ArrayList<>();
+        for(Long hotelID : longs){
+            ArrayList<String> list = listHashMap.get(hotelID);
+            if(list != null && list.size() > 2 && list.size() < 30){
+                StringBuilder tmp = new StringBuilder(hotelID + " ");
+                for(String value : list){
+                    tmp.append(value).append(" ");
+                }
+                wasted.add(tmp.toString());
+            }
+        }
+        for(String waste : wasted){
+            System.out.println(waste);
+        }
         System.out.println("Hotels are " + hotelsID.size());
         System.out.println("Searched val " + hotelsID.get(1));
         System.out.println("Select all ");
