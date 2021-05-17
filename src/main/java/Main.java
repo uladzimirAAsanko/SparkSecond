@@ -19,13 +19,13 @@ public class Main {
         for(String part : strings){
             System.out.println("Part is     " + part);
         }
-        ArrayList<Long> hotels_id = new ArrayList();//Long.parseLong(row.toString())) hotels_id.add(row.getLong(0)
+        ArrayList hotelsID = new ArrayList();//Long.parseLong(row.toString())) hotels_id.add(row.getLong(0)
         usersDF.selectExpr("CAST(hotel_id AS LONG)");
         usersDF.foreach((ForeachFunction<Row>) row -> {
             Long val = row.getLong(0);
             System.out.println(val);
-            hotels_id.add(val);
+            hotelsID.add(val);
         });
-        System.out.println("Hotels are " + (long) hotels_id.size());
+        System.out.println("Hotels are " + hotelsID.size());
     }
 }
