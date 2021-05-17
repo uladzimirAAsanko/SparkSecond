@@ -20,6 +20,6 @@ public class Main {
             System.out.println("Part is     " + part);
         }
         HashSet<String> hotels_id = new HashSet();
-        usersDF.foreach((ForeachFunction<Row>) System.out::println);
+        usersDF.sort(col("hotels_id")).show();
     }
 }
