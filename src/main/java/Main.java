@@ -13,8 +13,7 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static org.apache.spark.sql.functions.desc;
-import static org.apache.spark.sql.functions.round;
+import static org.apache.spark.sql.functions.*;
 
 public class Main {
     private static String offset = "offsetConf";
@@ -142,7 +141,8 @@ public class Main {
         dataset.groupBy("country").sum("count").orderBy(desc("sum(count)")).show();
         try {
             usersDF.write().format("csv")
-                    .partitionBy(String.valueOf(format.parse("srch_ci").toInstant().atZone(ZoneId.systemDefault()).toLocalDate().getYear()))
+                    .partitionBy(String.valueOf(format.parse(col("srch_ci").toString())
+                            .toInstant().atZone(ZoneId.systemDefault()).toLocalDate().getYear()))
                     .option("sep", ";")
                     .option("inferSchema", "true")
                     .option("header", "true")
