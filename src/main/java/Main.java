@@ -19,7 +19,7 @@ public class Main {
         for(String part : strings){
             System.out.println("Part is     " + part);
         }
-        HashSet<String> hotels_id = new HashSet();
-        usersDF.selectExpr("CAST(hotel_id AS LONG)").show();
+        HashSet<Long> hotels_id = new HashSet();
+        usersDF.selectExpr("CAST(hotel_id AS LONG)").foreach((ForeachFunction<Row>) row -> System.out.println(row));
     }
 }
