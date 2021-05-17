@@ -37,15 +37,7 @@ public class Main {
         AtomicInteger i = new AtomicInteger();
         System.out.println("Uniq hotels are " + uniqHotels.size());
         Dataset<Row> finalUsersDF = usersDF;
-        ArrayList<Long> notOne = new ArrayList<>();
-        notOne.add(197568495617L);
-        notOne.add(206158430210L);
-        notOne.add(2302102470656L);
-        notOne.add(2662879723520L);
-        notOne.add(3058016714753L);
-        notOne.add(3100966387715L);
-
-        notOne.forEach(s-> {
+        uniqHotels.forEach(s-> {
             ArrayList<String> list = new ArrayList<>();
             List<String> values = finalUsersDF.selectExpr("CAST(srch_ci AS STRING)").
                     where("hotel_id=" + s).
@@ -91,7 +83,7 @@ public class Main {
         ArrayList<Long> wasted = new ArrayList<>();
 
 
-        for(Long hotelID : notOne){
+        for(Long hotelID : uniqHotels){
             ArrayList<String> list = listHashMap.get(hotelID);
             if(list != null && list.size() > 0 && list.size() < 30){
                 wasted.add(hotelID);
@@ -106,11 +98,17 @@ public class Main {
             }
         }
 
-
+        for(Long val : wasted){
+            uniqHotels.remove(val);
+            usersDF = usersDF.where("hotel_id!=" + val);
+            System.out.println("Try to show data for hotel " + val);
+            usersDF.selectExpr("CAST(srch_ci AS STRING)").
+                    where("hotel_id=" + val).show();
+        }
 
         HashMap<String, Long> mapCity = new HashMap<>();
         HashMap<String, String> mapCountry = new HashMap<>();
-        for(Long val : wasted){
+        for(Long val : uniqHotels){
             String city = hotelData.get(val).getCity();
             String country = hotelData.get(val).getCountry();
 
