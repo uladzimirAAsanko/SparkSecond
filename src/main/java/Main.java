@@ -56,6 +56,10 @@ public class Main {
                 } catch (ParseException e) {
                     System.out.println("Error in parsing dates");
                 }
+                catch (NullPointerException e){
+                    System.out.println("Exception in hotel " + s);
+                    System.out.println("Values are  " + values.size());
+                }
             }
             listHashMap.put(s, list);
         });
