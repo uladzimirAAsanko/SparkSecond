@@ -25,6 +25,11 @@ public class Main {
         HashSet<Long> longs = new HashSet<>(hotelsID);
         System.out.println("Hotels are " + hotelsID.size());
         System.out.println("Uniq hotels are " + longs.size());
-
+        List<String> value = usersDF.selectExpr("CAST(srch_ci AS STRING)").where("hotel_id=" + hotelsID.get(0)).as(Encoders.STRING()).collectAsList();
+        System.out.println("Searched val " + hotelsID.get(0));
+        System.out.println("Get val size " + value.size());
+        for(String val : value){
+            System.out.println(val);
+        }
     }
 }
