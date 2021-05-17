@@ -136,9 +136,9 @@ public class Main {
         StructType structType = DataTypes.createStructType(listOfStructField);
         Dataset<Row> dataset = spark.createDataFrame(list, structType);
         System.out.println("Sort by city ");
-        dataset.sort("count").show();
+        dataset.orderBy("city").show();
         System.out.println("Sort by country ");
-        dataset.groupBy("country").count().show();
+        dataset.groupBy("country").sum("count").orderBy("count").show();
         //try {
             //usersDF.write().format("csv")
               //      .partitionBy(String.valueOf(format.parse("srch_ci").toInstant().atZone(ZoneId.systemDefault()).toLocalDate().getYear()))
