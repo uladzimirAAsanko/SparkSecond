@@ -31,10 +31,10 @@ public class Main {
             System.out.println("Part is     " + part);
         }
         List<Long> hotelsID =  usersDF.selectExpr("CAST(hotel_id AS LONG)").as(Encoders.LONG()).collectAsList();//Long.parseLong(row.toString())) hotels_id.add(row.getLong(0)
-        HashSet<Long> longs = new HashSet<>(hotelsID);
+        HashSet<Long> uniqHotels = new HashSet<>(hotelsID);
         HashMap<Long,ArrayList<String>> listHashMap = new HashMap<>();
         AtomicInteger i = new AtomicInteger();
-        System.out.println("Uniq hotels are " + longs.size());
+        System.out.println("Uniq hotels are " + uniqHotels.size());
         Dataset<Row> finalUsersDF = usersDF;
         ArrayList<Long> notOne = new ArrayList<>();
         notOne.add(197568495617L);
@@ -86,6 +86,7 @@ public class Main {
             }
             listHashMap.put(s, list);
         });
+        System.out.println("Printing invalid hotels : ");
         ArrayList<Long> wasted = new ArrayList<>();
         for(Long hotelID : notOne){
             ArrayList<String> list = listHashMap.get(hotelID);
@@ -102,14 +103,19 @@ public class Main {
             }
         }
         for(Long val : wasted){
+            uniqHotels.remove(val);
             usersDF = usersDF.where("hotel_id!=" + val);
+            System.out.println("Try to show data for hotel " + val);
+            usersDF.selectExpr("CAST(srch_ci AS STRING)").
+                    where("hotel_id=" + val).show();
         }
-        usersDF.write().format("csv")
-                .partitionBy("srch_ci")
-                .option("sep", ";")
-                .option("inferSchema", "true")
-                .option("header", "true")
-                .save("/user/hadoop/task1/expedia/new_ver/");
+
+        //usersDF.write().format("csv")
+          //      .partitionBy("srch_ci")
+            //    .option("sep", ";")
+              //  .option("inferSchema", "true")
+                //.option("header", "true")
+                //.save("/user/hadoop/task1/expedia/new_ver/");
         System.out.println("Hotels are " + hotelsID.size());
         System.out.println("Searched val " + hotelsID.get(1));
         System.out.println("Select all ");
@@ -118,7 +124,6 @@ public class Main {
     private static void invokeHotelData(){
         SparkSession spark = SparkSession.builder().appName("Simple Application").getOrCreate();
         ResourceBundle resourceBundle = ResourceBundle.getBundle(offset);
-        resourceBundle.getString("endingOffsets");
         Dataset<Row> df = spark
                 .read()
                 .format("kafka")
