@@ -1,13 +1,14 @@
 import by.sanko.spark.entity.HotelData;
 import by.sanko.spark.parser.HotelParser;
 import org.apache.spark.api.java.function.FilterFunction;
-import org.apache.spark.sql.Dataset;
-import org.apache.spark.sql.Encoders;
-import org.apache.spark.sql.Row;
-import org.apache.spark.sql.SparkSession;
+import org.apache.spark.sql.*;
+import org.apache.spark.sql.types.DataType;
+import org.apache.spark.sql.types.DataTypes;
+import org.apache.spark.sql.types.StructType;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -109,13 +110,39 @@ public class Main {
             usersDF.selectExpr("CAST(srch_ci AS STRING)").
                     where("hotel_id=" + val).show();
         }
-
-        //usersDF.write().format("csv")
-          //      .partitionBy("srch_ci")
-            //    .option("sep", ";")
-              //  .option("inferSchema", "true")
-                //.option("header", "true")
-                //.save("/user/hadoop/task1/expedia/new_ver/");
+        HashMap<String, Long> map = new HashMap<>();
+        for(Long val : uniqHotels){
+            String country = hotelData.get(val).getCountry();
+            Long count = usersDF.where("hotel_id=" + val).count();
+            if(map.get(country) == null){
+                map.put(country, count);
+            }else{
+                Long oldValue = map.get(country);
+                Long newValue = oldValue + count;
+                map.replace(country,oldValue,newValue);
+            }
+        }
+        List<Row> list = new ArrayList<>();
+        map.forEach((k,v)->{
+            list.add(RowFactory.create(k,v));
+        });
+        List<org.apache.spark.sql.types.StructField> listOfStructField=
+                new ArrayList<org.apache.spark.sql.types.StructField>();
+        listOfStructField.add(DataTypes.createStructField("country",DataTypes.StringType,false));
+        listOfStructField.add(DataTypes.createStructField("count",DataTypes.LongType,false));
+        StructType structType = DataTypes.createStructType(listOfStructField);
+        Dataset<Row> dataset = spark.createDataFrame(list, structType);
+        dataset.show();
+        //try {
+            //usersDF.write().format("csv")
+              //      .partitionBy(String.valueOf(format.parse("srch_ci").toInstant().atZone(ZoneId.systemDefault()).toLocalDate().getYear()))
+                //    .option("sep", ";")
+                  //  .option("inferSchema", "true")
+                    //.option("header", "true")
+                    //.save("/user/hadoop/task1/expedia/new_ver/");
+        //} catch (ParseException e) {
+          //  e.printStackTrace();
+        //}
         System.out.println("Hotels are " + hotelsID.size());
         System.out.println("Searched val " + hotelsID.get(1));
         System.out.println("Select all ");
