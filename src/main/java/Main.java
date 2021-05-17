@@ -91,7 +91,20 @@ public class Main {
         ArrayList<Long> wasted = new ArrayList<>();
 
 
-
+        for(Long hotelID : notOne){
+            ArrayList<String> list = listHashMap.get(hotelID);
+            if(list != null && list.size() > 0 && list.size() < 30){
+                wasted.add(hotelID);
+                StringBuilder tmp = new StringBuilder(hotelID + " ");
+                HotelData hotelInfo = hotelData.get(hotelID);
+                tmp.append(hotelInfo.getName()).append(" ").append(hotelInfo.getCountry()).append(" ")
+                        .append(hotelInfo.getCity()).append(" ").append(hotelInfo.getAddress());
+                for(String value : list){
+                    tmp.append(value).append(" ");
+                }
+                System.out.println(tmp.toString());
+            }
+        }
 
 
 
