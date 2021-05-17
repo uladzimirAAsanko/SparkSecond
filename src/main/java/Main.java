@@ -52,6 +52,7 @@ public class Main {
                             c.add(Calendar.DATE,1);
                         }
                     }
+                    prevVal = data;
                 } catch (ParseException e) {
                     System.out.println("Error in parsing dates");
                 }
