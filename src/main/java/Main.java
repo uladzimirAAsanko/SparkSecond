@@ -104,26 +104,31 @@ public class Main {
             }
         }
 
-        HashMap<String, Long> map = new HashMap<>();
+        HashMap<String, Long> mapCity = new HashMap<>();
+        HashMap<String, String> mapCountry = new HashMap<>();
         for(Long val : wasted){
+            String city = hotelData.get(val).getCity();
             String country = hotelData.get(val).getCountry();
+
             Long count = usersDF.where("hotel_id=" + val).count();
-            if(map.get(country) == null){
-                map.put(country, count);
+            if(mapCity.get(city) == null){
+                mapCity.put(city, count);
+                mapCountry.put(city, country);
             }else{
-                Long oldValue = map.get(country);
+                Long oldValue = mapCity.get(city);
                 Long newValue = oldValue + count;
-                map.replace(country,oldValue,newValue);
+                mapCity.replace(city,oldValue,newValue);
             }
         }
         List<Row> list = new ArrayList<>();
-        map.forEach((k,v)->{
-            list.add(RowFactory.create(k,v));
+        mapCity.forEach((k,v)->{
+            list.add(RowFactory.create(k,v,mapCountry.get(k)));
         });
         List<org.apache.spark.sql.types.StructField> listOfStructField=
                 new ArrayList<org.apache.spark.sql.types.StructField>();
-        listOfStructField.add(DataTypes.createStructField("country",DataTypes.StringType,false));
+        listOfStructField.add(DataTypes.createStructField("city",DataTypes.StringType,false));
         listOfStructField.add(DataTypes.createStructField("count",DataTypes.LongType,false));
+        listOfStructField.add(DataTypes.createStructField("country",DataTypes.StringType,false));
         StructType structType = DataTypes.createStructType(listOfStructField);
         Dataset<Row> dataset = spark.createDataFrame(list, structType);
         dataset.show();
