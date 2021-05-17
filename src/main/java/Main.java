@@ -37,9 +37,23 @@ public class Main {
                     as(Encoders.STRING()).
                     filter((FilterFunction<String>) Objects::nonNull).
                     collectAsList();
-            System.out.println("Process " + s +" by count is " +i + " size of dates is " + values.size());
             i.getAndIncrement();
             String prevVal = values.get(0);
+            Date prevDatetmp = null;
+            try {
+                prevDatetmp = format.parse(values.get(0));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            Date currDatetmp = null;
+            try {
+                currDatetmp = format.parse(values.get(1));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            long difftmp = prevDatetmp.getTime() - currDatetmp.getTime();
+            long dayDifftmp = TimeUnit.DAYS.convert(difftmp, TimeUnit.MILLISECONDS);
+            System.out.println("Process " + s +" by count is " +i + " size of dates is " + values.size() + " first value " + prevDatetmp + " second value " + currDatetmp + " daydiff " + dayDifftmp);
             for(String data : values){
                 try {
                     Date prevDate = format.parse(prevVal);
