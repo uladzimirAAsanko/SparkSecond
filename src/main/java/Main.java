@@ -111,7 +111,7 @@ public class Main {
                     where("hotel_id=" + val).show();
         }
         HashMap<String, Long> map = new HashMap<>();
-        for(Long val : uniqHotels){
+        for(Long val : wasted){
             String country = hotelData.get(val).getCountry();
             Long count = usersDF.where("hotel_id=" + val).count();
             if(map.get(country) == null){
