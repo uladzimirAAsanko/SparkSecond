@@ -25,13 +25,12 @@ public class Main {
         HashSet<Long> longs = new HashSet<>(hotelsID);
         System.out.println("Hotels are " + hotelsID.size());
         System.out.println("Uniq hotels are " + longs.size());
-        List<String> value = usersDF.selectExpr("CAST(srch_ci AS STRING)").where("hotel_id=" + hotelsID.get(0)).orderBy("srch_ci").as(Encoders.STRING()).collectAsList();
+        List<String> value = usersDF.selectExpr("CAST(srch_ci AS STRING)").where("hotel_id=" + hotelsID.get(1)).orderBy("srch_ci").as(Encoders.STRING()).collectAsList();
         System.out.println("Searched val " + hotelsID.get(1));
         System.out.println("Get val size " + value.size());
         for(String val : value){
             System.out.println(val);
         }
         System.out.println("Select all ");
-        usersDF.where("hotel_id=" + hotelsID.get(0)).orderBy("srch_ci").foreach((ForeachFunction<Row>) System.out::println);
     }
 }
