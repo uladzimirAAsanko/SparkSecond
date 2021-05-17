@@ -36,7 +36,15 @@ public class Main {
         AtomicInteger i = new AtomicInteger();
         System.out.println("Uniq hotels are " + longs.size());
         Dataset<Row> finalUsersDF = usersDF;
-        longs.forEach(s-> {
+        ArrayList<Long> notOne = new ArrayList<>();
+        notOne.add(197568495617L);
+        notOne.add(206158430210L);
+        notOne.add(2302102470656L);
+        notOne.add(2662879723520L);
+        notOne.add(3058016714753L);
+        notOne.add(3100966387715L);
+
+        notOne.forEach(s-> {
             ArrayList<String> list = new ArrayList<>();
             List<String> values = finalUsersDF.selectExpr("CAST(srch_ci AS STRING)").
                     where("hotel_id=" + s).
@@ -79,7 +87,7 @@ public class Main {
             listHashMap.put(s, list);
         });
         ArrayList<Long> wasted = new ArrayList<>();
-        for(Long hotelID : longs){
+        for(Long hotelID : notOne){
             ArrayList<String> list = listHashMap.get(hotelID);
             if(list != null && list.size() > 0 && list.size() < 30){
                 wasted.add(hotelID);
