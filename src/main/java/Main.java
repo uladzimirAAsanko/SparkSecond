@@ -53,12 +53,12 @@ public class Main {
             }
             long difftmp = prevDatetmp.getTime() - currDatetmp.getTime();
             long dayDifftmp = TimeUnit.DAYS.convert(difftmp, TimeUnit.MILLISECONDS);
-            System.out.println("Process " + s +" by count is " +i + " size of dates is " + values.size() + " first value " + prevDatetmp + " second value " + currDatetmp + " daydiff " + dayDifftmp);
+            //System.out.println("Process " + s +" by count is " +i + " size of dates is " + values.size() + " first value " + prevDatetmp + " second value " + currDatetmp + " daydiff " + dayDifftmp);
             for(String data : values){
                 try {
                     Date prevDate = format.parse(prevVal);
                     Date currDate = format.parse(data);
-                    long diff = prevDate.getTime() - currDate.getTime();
+                    long diff = currDate.getTime() - prevDate.getTime();
                     long dayDiff = TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS);
                     if (dayDiff > 1){
                         System.out.println("Hotel with missing date  is " + s);
