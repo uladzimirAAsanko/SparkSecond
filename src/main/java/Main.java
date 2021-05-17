@@ -2,6 +2,8 @@ import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SparkSession;
 
+import static org.apache.spark.sql.functions.col;
+
 public class Main {
     public static void main(String[] args) {
         SparkSession spark = SparkSession.builder().appName("Simple Application").getOrCreate();
@@ -13,6 +15,7 @@ public class Main {
         for(String part : strings){
             System.out.println("Part is     " + part);
         }
-        usersDF.show();
+        Dataset<Row> hotelsID =  usersDF.filter(col("hotel_id"));
+        hotelsID.show();
     }
 }
