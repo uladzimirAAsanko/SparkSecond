@@ -139,17 +139,17 @@ public class Main {
         System.out.println("Sort by city ");
         dataset.orderBy(desc("count")).show();
         System.out.println("Sort by country ");
-        dataset.groupBy("country").sum("count").orderBy(desc("count")).show();
-        //try {
-            //usersDF.write().format("csv")
-              //      .partitionBy(String.valueOf(format.parse("srch_ci").toInstant().atZone(ZoneId.systemDefault()).toLocalDate().getYear()))
-                //    .option("sep", ";")
-                  //  .option("inferSchema", "true")
-                    //.option("header", "true")
-                    //.save("/user/hadoop/task1/expedia/new_ver/");
-        //} catch (ParseException e) {
-          //  e.printStackTrace();
-        //}
+        dataset.groupBy("country").sum("count").orderBy(desc("sum(count)")).show();
+        try {
+            usersDF.write().format("csv")
+                    .partitionBy(String.valueOf(format.parse("srch_ci").toInstant().atZone(ZoneId.systemDefault()).toLocalDate().getYear()))
+                    .option("sep", ";")
+                    .option("inferSchema", "true")
+                    .option("header", "true")
+                    .save("/user/hadoop/task1/expedia/new_ver/");
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
         System.out.println("Hotels are " + hotelsID.size());
         System.out.println("Searched val " + hotelsID.get(1));
         System.out.println("Select all ");
