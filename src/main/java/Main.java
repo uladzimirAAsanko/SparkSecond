@@ -1,3 +1,4 @@
+import org.apache.spark.api.java.function.FilterFunction;
 import org.apache.spark.api.java.function.ForeachFunction;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Encoders;
@@ -10,6 +11,7 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 import static org.apache.spark.sql.functions.col;
+import static org.apache.spark.sql.functions.round;
 
 public class Main {
     private static SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
@@ -32,6 +34,7 @@ public class Main {
                     where("hotel_id=" + s).
                     orderBy("srch_ci").
                     as(Encoders.STRING()).
+                    filter((FilterFunction<String>) Objects::nonNull).
                     collectAsList();
             String prevVal = values.get(0);
             for(String data : values){
