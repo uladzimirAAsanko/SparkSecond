@@ -20,6 +20,6 @@ public class Main {
             System.out.println("Part is     " + part);
         }
         HashSet<String> hotels_id = new HashSet();
-        usersDF.sort(col("hotels_id")).show();
+        usersDF.selectExpr("CAST(hotel_id AS STRING)").show();
     }
 }
