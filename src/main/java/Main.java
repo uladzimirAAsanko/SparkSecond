@@ -32,11 +32,11 @@ public class Main {
         longs.forEach(s-> {
             ArrayList<String> list = new ArrayList<>();
             List<String> values = usersDF.selectExpr("CAST(srch_ci AS STRING)").
-                    dropDuplicates().
                     where("hotel_id=" + s).
                     orderBy("srch_ci").
                     as(Encoders.STRING()).
                     filter((FilterFunction<String>) Objects::nonNull).
+                    dropDuplicates().
                     collectAsList();
             i.getAndIncrement();
             String prevVal = values.get(0);
