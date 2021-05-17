@@ -20,7 +20,7 @@ public class Main {
             System.out.println("Part is     " + part);
         }
         HashSet<Long> hotels_id = new HashSet();//Long.parseLong(row.toString())) hotels_id.add(row.getLong(0)
-        usersDF.selectExpr("CAST(hotel_id AS LONG)").foreach((ForeachFunction<Row>) row -> System.out.println(row.length()));
+        usersDF.selectExpr("CAST(hotel_id AS LONG)").foreach((ForeachFunction<Row>) row -> System.out.println("Zero is " + row.getString(0) + "First is " + row.getString(1)));
         System.out.println("Hotels are " + (long) hotels_id.size());
     }
 }
