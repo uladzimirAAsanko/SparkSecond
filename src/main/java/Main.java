@@ -13,6 +13,7 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static org.apache.spark.sql.functions.desc;
 import static org.apache.spark.sql.functions.round;
 
 public class Main {
@@ -136,9 +137,9 @@ public class Main {
         StructType structType = DataTypes.createStructType(listOfStructField);
         Dataset<Row> dataset = spark.createDataFrame(list, structType);
         System.out.println("Sort by city ");
-        dataset.orderBy("count DESC").show();
+        dataset.orderBy(desc("count")).show();
         System.out.println("Sort by country ");
-        dataset.groupBy("country").sum("count").orderBy("sum(count) DESC").show();
+        dataset.groupBy("country").sum("count").orderBy(desc("count")).show();
         //try {
             //usersDF.write().format("csv")
               //      .partitionBy(String.valueOf(format.parse("srch_ci").toInstant().atZone(ZoneId.systemDefault()).toLocalDate().getYear()))
