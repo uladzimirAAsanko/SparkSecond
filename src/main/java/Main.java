@@ -32,6 +32,7 @@ public class Main {
         longs.forEach(s-> {
             ArrayList<String> list = new ArrayList<>();
             List<String> values = usersDF.selectExpr("CAST(srch_ci AS STRING)").
+                    distinct().
                     where("hotel_id=" + s).
                     orderBy("srch_ci").
                     as(Encoders.STRING()).
