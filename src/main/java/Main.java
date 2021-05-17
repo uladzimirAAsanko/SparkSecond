@@ -103,13 +103,7 @@ public class Main {
                 System.out.println(tmp.toString());
             }
         }
-        for(Long val : wasted){
-            uniqHotels.remove(val);
-            usersDF = usersDF.where("hotel_id!=" + val);
-            System.out.println("Try to show data for hotel " + val);
-            usersDF.selectExpr("CAST(srch_ci AS STRING)").
-                    where("hotel_id=" + val).show();
-        }
+
         HashMap<String, Long> map = new HashMap<>();
         for(Long val : wasted){
             String country = hotelData.get(val).getCountry();
