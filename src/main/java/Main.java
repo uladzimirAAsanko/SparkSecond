@@ -22,6 +22,9 @@ public class Main {
             System.out.println("Part is     " + part);
         }
         List<Long> hotelsID =  usersDF.selectExpr("CAST(hotel_id AS LONG)").as(Encoders.LONG()).collectAsList();//Long.parseLong(row.toString())) hotels_id.add(row.getLong(0)
+        HashSet<Long> longs = new HashSet<>(hotelsID);
         System.out.println("Hotels are " + hotelsID.size());
+        System.out.println("Uniq hotels are " + longs.size());
+
     }
 }
