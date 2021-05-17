@@ -139,17 +139,14 @@ public class Main {
         dataset.orderBy(desc("count")).show();
         System.out.println("Sort by country ");
         dataset.groupBy("country").sum("count").orderBy(desc("sum(count)")).show();
-        try {
-            usersDF.write().format("csv")
-                    .partitionBy(String.valueOf(format.parse(col("srch_ci").toString())
-                            .toInstant().atZone(ZoneId.systemDefault()).toLocalDate().getYear()))
+
+        usersDF.write().format("csv")
+                    .partitionBy("srch_ci")
                     .option("sep", ";")
                     .option("inferSchema", "true")
                     .option("header", "true")
                     .save("/user/hadoop/task1/expedia/new_ver/");
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
+
         System.out.println("Hotels are " + hotelsID.size());
         System.out.println("Searched val " + hotelsID.get(1));
         System.out.println("Select all ");
