@@ -1,5 +1,4 @@
 import org.apache.spark.api.java.function.FilterFunction;
-import org.apache.spark.api.java.function.ForeachFunction;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Encoders;
 import org.apache.spark.sql.Row;
@@ -9,8 +8,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
-import static org.apache.spark.sql.functions.col;
 import static org.apache.spark.sql.functions.round;
 
 public class Main {
@@ -28,6 +27,8 @@ public class Main {
         List<Long> hotelsID =  usersDF.selectExpr("CAST(hotel_id AS LONG)").as(Encoders.LONG()).collectAsList();//Long.parseLong(row.toString())) hotels_id.add(row.getLong(0)
         HashSet<Long> longs = new HashSet<>(hotelsID);
         HashMap<Long,ArrayList<String>> listHashMap = new HashMap<>();
+        AtomicInteger i = new AtomicInteger();
+        System.out.println("Uniq hotels are " + longs.size());
         longs.forEach(s-> {
             ArrayList<String> list = new ArrayList<>();
             List<String> values = usersDF.selectExpr("CAST(srch_ci AS STRING)").
@@ -36,6 +37,8 @@ public class Main {
                     as(Encoders.STRING()).
                     filter((FilterFunction<String>) Objects::nonNull).
                     collectAsList();
+            System.out.println("Process " + s +" by count is " +i + " size of dates is " + values.size());
+            i.getAndIncrement();
             String prevVal = values.get(0);
             for(String data : values){
                 try {
@@ -68,7 +71,6 @@ public class Main {
         });
 
         System.out.println("Hotels are " + hotelsID.size());
-        System.out.println("Uniq hotels are " + longs.size());
         System.out.println("Searched val " + hotelsID.get(1));
         System.out.println("Select all ");
     }
