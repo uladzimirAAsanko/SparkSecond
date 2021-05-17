@@ -89,6 +89,8 @@ public class Main {
         });
         System.out.println("Printing invalid hotels : ");
         ArrayList<Long> wasted = new ArrayList<>();
+
+
         for(Long hotelID : notOne){
             ArrayList<String> list = listHashMap.get(hotelID);
             if(list != null && list.size() > 0 && list.size() < 30){
@@ -103,6 +105,8 @@ public class Main {
                 System.out.println(tmp.toString());
             }
         }
+
+
 
         HashMap<String, Long> mapCity = new HashMap<>();
         HashMap<String, String> mapCountry = new HashMap<>();
@@ -131,7 +135,10 @@ public class Main {
         listOfStructField.add(DataTypes.createStructField("country",DataTypes.StringType,false));
         StructType structType = DataTypes.createStructType(listOfStructField);
         Dataset<Row> dataset = spark.createDataFrame(list, structType);
-        dataset.show();
+        System.out.println("Sort by city ");
+        dataset.sort("count").show();
+        System.out.println("Sort by country ");
+        dataset.groupBy("country").count().show();
         //try {
             //usersDF.write().format("csv")
               //      .partitionBy(String.valueOf(format.parse("srch_ci").toInstant().atZone(ZoneId.systemDefault()).toLocalDate().getYear()))
