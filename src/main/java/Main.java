@@ -19,8 +19,8 @@ public class Main {
         for(String part : strings){
             System.out.println("Part is     " + part);
         }
-        HashSet<Long> hotels_id = new HashSet();//Long.parseLong(row.toString()))
-        usersDF.selectExpr("CAST(hotel_id AS LONG)").foreach((ForeachFunction<Row>) row -> hotels_id.add(row.getLong(0)));
+        HashSet<Long> hotels_id = new HashSet();//Long.parseLong(row.toString())) hotels_id.add(row.getLong(0)
+        usersDF.selectExpr("CAST(hotel_id AS LONG)").foreach((ForeachFunction<Row>) row -> System.out.println(row.length()));
         System.out.println("Hotels are " + (long) hotels_id.size());
     }
 }
