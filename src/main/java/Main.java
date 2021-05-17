@@ -136,9 +136,9 @@ public class Main {
         StructType structType = DataTypes.createStructType(listOfStructField);
         Dataset<Row> dataset = spark.createDataFrame(list, structType);
         System.out.println("Sort by city ");
-        dataset.orderBy("city").show();
+        dataset.orderBy("count").show();
         System.out.println("Sort by country ");
-        dataset.groupBy("country").sum("count").orderBy("count").show();
+        dataset.groupBy("country").sum("count").orderBy("sum(count)").show();
         //try {
             //usersDF.write().format("csv")
               //      .partitionBy(String.valueOf(format.parse("srch_ci").toInstant().atZone(ZoneId.systemDefault()).toLocalDate().getYear()))
@@ -173,7 +173,6 @@ public class Main {
             int index = value.indexOf('\n');
             String tmp = value.substring(index + 1, value.indexOf('\n', index +1));
             hotels.add(tmp);
-            System.out.println(tmp);
         }
         for(String hotel : hotels){
             HotelData data = HotelParser.parseData(hotel);
