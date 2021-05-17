@@ -1,5 +1,6 @@
 import org.apache.spark.api.java.function.ForeachFunction;
 import org.apache.spark.sql.Dataset;
+import org.apache.spark.sql.Encoders;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SparkSession;
 
@@ -19,13 +20,7 @@ public class Main {
         for(String part : strings){
             System.out.println("Part is     " + part);
         }
-        ArrayList hotelsID = new ArrayList();//Long.parseLong(row.toString())) hotels_id.add(row.getLong(0)
-        usersDF.selectExpr("CAST(hotel_id AS LONG)");
-        usersDF.foreach((ForeachFunction<Row>) row -> {
-            Long val = row.getLong(0);
-            System.out.println(val);
-            hotelsID.add(val);
-        });
+        ArrayList<Long> hotelsID = (ArrayList<Long>) usersDF.selectExpr("CAST(hotel_id AS LONG)").as(Encoders.LONG()).collectAsList();//Long.parseLong(row.toString())) hotels_id.add(row.getLong(0)
         System.out.println("Hotels are " + hotelsID.size());
     }
 }
