@@ -36,8 +36,6 @@ public class Main {
         HashMap<Long,ArrayList<String>> listHashMap = new HashMap<>();
         AtomicInteger i = new AtomicInteger();
         System.out.println("Uniq hotels are " + uniqHotels.size());
-        Column column = usersDF.col("srch_ci").substr(0,4);;
-        usersDF.withColumn("year",column).selectExpr("CAST(year AS STRING)").show();
         Dataset<Row> finalUsersDF = usersDF;
         uniqHotels.forEach(s-> {
             ArrayList<String> list = new ArrayList<>();
@@ -139,8 +137,9 @@ public class Main {
         dataset.orderBy(desc("count")).show();
         System.out.println("Sort by country ");
         dataset.groupBy("country").sum("count").orderBy(desc("sum(count)")).show();
-        usersDF.write().format("csv")
-                    .partitionBy("srch_ci")
+        Column column = usersDF.col("srch_ci").substr(0,4);
+        usersDF.withColumn("year", column).write().format("csv")
+                    .partitionBy("year")
                     .option("sep", ";")
                     .option("inferSchema", "true")
                     .option("header", "true")
