@@ -37,7 +37,7 @@ public class Main {
         AtomicInteger i = new AtomicInteger();
         System.out.println("Uniq hotels are " + uniqHotels.size());
         Column column = usersDF.col("srch_ci").substr(0,4);;
-        usersDF.withColumn("year",column).show();
+        usersDF.withColumn("year",column).selectExpr("CAST(year AS STRING)").show();
         Dataset<Row> finalUsersDF = usersDF;
         uniqHotels.forEach(s-> {
             ArrayList<String> list = new ArrayList<>();
